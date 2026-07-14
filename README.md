@@ -1,108 +1,129 @@
 # Oru Aka
 
-**"Oru Aka"** \u2014 hand work. Nigeria's marketplace for skilled trades:
-electricians, plumbers, tailors, carpenters, AC technicians, painters,
-welders, tilers, and more across Enugu, Lagos, and Abuja.
+**Oru Aka** (meaning **"Hand Work"** in Igbo) is a full-stack marketplace that connects customers with trusted local skilled professionals. Whether you're looking for an electrician, plumber, carpenter, tailor, painter, welder, AC technician, or other artisans, Oru Aka makes it easy to discover, connect with, and hire verified service providers.
 
-MERN stack (MongoDB, Express, React, Node). Built as two independent
-projects \u2014 `server/` (API) and `client/` (web app) \u2014 so they can be deployed
-separately.
+Built with the **MERN** stack (MongoDB, Express.js, React, and Node.js), the project is organized into two independent applications:
 
-## Quick start
+- `server/` – REST API
+- `client/` – React web application
 
-You need two terminal windows.
+This architecture allows both applications to be developed and deployed independently.
 
-**Terminal 1 \u2014 backend**
+---
+
+## 🚀 Quick Start
+
+Open **two terminal windows**.
+
+### Terminal 1 – Backend
+
 ```bash
 cd server
 npm install
 cp .env.example .env
-# Open .env and set at minimum: MONGO_URI, JWT_SECRET, JWT_REFRESH_SECRET
-# (see server/README.md for exactly how to get each value)
-npm run seed     # populates 12 sample workers + 3 clients + 1 admin
-npm run dev      # http://localhost:5000
+
+# Configure your environment variables
+# (See server/README.md for setup instructions)
+
+npm run seed
+npm run dev
 ```
 
-**Terminal 2 \u2014 frontend**
+The API will be available at:
+
+```
+http://localhost:5000
+```
+
+### Terminal 2 – Frontend
+
 ```bash
 cd client
 npm install
 cp .env.example .env
-npm run dev      # http://localhost:5173
+
+npm run dev
 ```
 
-Open `http://localhost:5173`. You should see the home page with sample
-workers from the seed script.
-
-**Try it out:**
-- Browse workers without logging in: `/workers`
-- Log in as a seeded worker: phone `+2348031234501`, password `password123`
-  (Chidi Okeke, Electrician, Enugu) \u2014 see `server/src/scripts/seed.js` for
-  the full list of 12 seeded accounts
-- Log in as admin: phone `+2348000000000`, password `ChangeThisPassword123!`
-  (or whatever you set in `ADMIN_PASSWORD`) \u2014 visit `/admin` to see the
-  verification queue
-
-## What's fully working out of the box
-
-- Browsing, searching, and filtering workers (trade, location, price,
-  experience, availability, verified-only)
-- Worker profiles with photos, skills, reviews, ratings
-- Signup/login, JWT auth with automatic token refresh
-- Worker dashboard: create/edit listing, upload portfolio photos, submit ID
-  for verification
-- Admin verification queue: approve/reject worker IDs
-- Real-time in-app chat (Socket.io) between clients and workers
-- Reviews and ratings
-- Direct contact via phone link and WhatsApp link on every profile
-
-## What needs your API keys to fully activate
-
-The app **runs completely without these** \u2014 it falls back to dev-friendly
-behavior so you can build and test everything locally first.
-
-| Feature | Without a key | With a key |
-|---|---|---|
-| Phone OTP verification | Code is printed to the **server console** instead of sent by SMS | Real SMS via Termii (`TERMII_API_KEY` in `server/.env`) |
-| Photo / ID uploads | Returns a placeholder image | Real image hosting via Cloudinary (`CLOUDINARY_*` in `server/.env`) |
-| MongoDB | Won't start without a real connection string | Free tier at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) |
-
-Exact signup steps for each are documented inline in `server/.env.example`.
-
-## What's intentionally not live yet (by design, not by accident)
-
-**Boost payments.** Per the project scope, Oru Aka is free for workers to
-list; boosting a listing to the top of search is the paid feature, planned
-for v1.1. The schema (`Boost` model), pricing endpoint, dashboard UI, and
-request flow are all built and working \u2014 a worker can "reserve" a boost
-today \u2014 but no card is charged because Paystack/Flutterwave checkout isn't
-wired in yet. When you're ready to turn this on, the integration point is
-`server/src/controllers/boostController.js`.
-
-## Project structure
+The web application will be available at:
 
 ```
+http://localhost:5173
+```
+
+Once both servers are running, open the application in your browser to explore the seeded sample data.
+
+---
+
+## ✨ Features
+
+- User registration and secure authentication
+- Browse and search skilled professionals
+- Filter workers by trade, location, experience, price, and availability
+- Worker profiles with ratings, reviews, and portfolio images
+- Worker dashboard for managing services and profile
+- Admin dashboard for artisan verification
+- Secure JWT authentication with refresh tokens
+- Real-time messaging using Socket.io
+- Direct contact through phone and WhatsApp
+- Responsive design for desktop and mobile devices
+
+---
+
+## 🔑 Optional Integrations
+
+The application works out of the box for local development. The following services can be added to unlock additional functionality.
+
+| Service | Purpose |
+|---------|---------|
+| MongoDB Atlas | Cloud database |
+| Cloudinary | Image and portfolio uploads |
+| Termii | SMS OTP verification |
+
+Configuration details are provided in **`server/.env.example`**.
+
+---
+
+## 📁 Project Structure
+
+```text
 oru-aka/
-├── server/      Express API \u2014 see server/README.md
-└── client/      React (Vite) web app \u2014 see client/README.md
+├── client/      React (Vite)
+└── server/      Express API
 ```
 
-## Deployment (when you're ready to go live)
+---
 
-Recommended free-tier-friendly stack for launch:
-- **Database**: MongoDB Atlas (M0 free cluster)
-- **Backend**: Render or Railway (both have free tiers suitable for launch
-  traffic; deploy the `server/` folder, set the same env vars from
-  `.env.example` in their dashboard)
-- **Frontend**: Vercel or Netlify (deploy the `client/` folder, set
-  `VITE_API_URL` to your deployed backend's URL)
+## 🚀 Deployment
 
-None of these require code changes \u2014 just environment variables pointing
-at production values instead of `localhost`.
+Recommended deployment stack:
 
-## Roadmap after this v1
+- **Frontend:** Vercel
+- **Backend:** Render or Railway
+- **Database:** MongoDB Atlas
+- **Image Storage:** Cloudinary
 
-- Boost payment integration (Paystack/Flutterwave)
-- Mobile app (React Native), reusing the same backend API
-- Job-posting/bidding as an additional discovery mode alongside browse-and-contact
-- Nationwide coverage beyond Enugu, Lagos, Abuja
+Simply update your environment variables with production values before deploying.
+
+---
+
+## 🛣️ Roadmap
+
+Future improvements include:
+
+- Payment integration (Paystack/Flutterwave)
+- Featured artisan listings
+- React Native mobile application
+- Job posting and bidding
+- Expansion to more cities across Nigeria
+
+---
+
+## 👨‍💻 Author
+
+**Toby Ishiwu**
+
+- Portfolio: https://tobyishiwu.tech
+- GitHub: https://github.com/Tobyishiwu
+
+If you found this project interesting, consider giving it a ⭐.
