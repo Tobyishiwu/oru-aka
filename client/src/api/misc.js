@@ -1,4 +1,4 @@
-import api from "./client";
+﻿import api from "./client";
 
 export const chatApi = {
   listConversations: () => api.get("/chat/conversations"),
@@ -17,6 +17,7 @@ export const boostApi = {
 export const metaApi = {
   getTrades: () => api.get("/meta/trades"),
   getStates: () => api.get("/meta/states"),
+  getTradeCounts: () => api.get("/meta/trade-counts"),
 };
 
 export const userApi = {
@@ -37,3 +38,4 @@ export const adminApi = {
   listUsers: (params) => api.get("/admin/users", { params }),
   deactivateUser: (userId) => api.patch(`/admin/users/${userId}/deactivate`),
 };
+

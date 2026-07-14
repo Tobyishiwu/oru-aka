@@ -1,4 +1,4 @@
-const asyncHandler = require("express-async-handler");
+﻿const asyncHandler = require("express-async-handler");
 const Review = require("../models/Review");
 const WorkerProfile = require("../models/WorkerProfile");
 const { ApiError } = require("../middleware/errorHandler");
@@ -48,6 +48,7 @@ const createReview = asyncHandler(async (req, res) => {
   }
 
   await recomputeRating(workerId);
+  await WorkerProfile.findByIdAndUpdate(workerId, { $inc: { jobsCompletedCount: 1 } });
 
   res.status(201).json({ success: true, review });
 });
@@ -63,3 +64,4 @@ const listReviewsForWorker = asyncHandler(async (req, res) => {
 });
 
 module.exports = { createReview, listReviewsForWorker };
+
