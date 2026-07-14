@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+﻿import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 
@@ -27,6 +27,7 @@ import DashboardBoostPage from "./components/dashboard/DashboardBoostPage";
 
 import AdminStatsPage from "./components/admin/AdminStatsPage";
 import AdminVerificationQueuePage from "./components/admin/AdminVerificationQueuePage";
+import AdminUsersPage from "./components/admin/AdminUsersPage";
 
 export default function App() {
   return (
@@ -93,6 +94,7 @@ export default function App() {
             >
               <Route index element={<AdminStatsPage />} />
               <Route path="verification-queue" element={<AdminVerificationQueuePage />} />
+              <Route path="users" element={<AdminUsersPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
@@ -102,3 +104,5 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+

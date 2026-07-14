@@ -70,7 +70,7 @@ export default function AdminVerificationQueuePage() {
                 <div>
                   <p className="text-[0.9rem] font-semibold text-ink-800">{item.user?.name}</p>
                   <p className="text-[0.825rem] text-ink-400">
-                    {item.trade} Â· {item.user?.phone} Â· submitted {formatRelativeTime(item.updatedAt)}
+                    {item.trade} &middot; {item.user?.phone} &middot; submitted {formatRelativeTime(item.updatedAt)}
                   </p>
                 </div>
               </div>
@@ -113,3 +113,5 @@ export default function AdminVerificationQueuePage() {
     </div>
   );
 }
+
+

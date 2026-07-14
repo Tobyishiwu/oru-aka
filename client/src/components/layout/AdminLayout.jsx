@@ -1,9 +1,10 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { LayoutDashboard, ShieldCheck } from "lucide-react";
+﻿import { NavLink, Outlet } from "react-router-dom";
+import { LayoutDashboard, ShieldCheck, Users } from "lucide-react";
 
 const NAV_ITEMS = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/admin/verification-queue", label: "Verification queue", icon: ShieldCheck },
+  { to: "/admin/users", label: "Users", icon: Users },
 ];
 
 export default function AdminLayout() {
@@ -39,3 +40,5 @@ export default function AdminLayout() {
     </div>
   );
 }
+
+
