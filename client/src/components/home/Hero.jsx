@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, MapPin, Search, Star, Wrench } from "lucide-react";
@@ -6,10 +6,8 @@ import AdireDivider from "../ui/AdireDivider";
 
 const POPULAR_TRADES = ["Electrician", "Plumber", "Tailor", "Carpenter"];
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80";
-const HERO_IMAGE_AVATAR =
-  "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=facearea&facepad=2.5&w=200&h=200&q=80";
+const HERO_IMAGE = "/hero-electrician.png";
+const HERO_IMAGE_AVATAR = "/hero-electrician.png";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -60,7 +58,7 @@ export default function Hero() {
               transition={{ duration: 0.55, delay: 0.12 }}
               className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-indigo-200"
             >
-              Find skilled, reviewed tradespeople near you — electricians, plumbers, tailors,
+              Find skilled, reviewed tradespeople near you â€” electricians, plumbers, tailors,
               carpenters, and more.
             </motion.p>
 
@@ -142,7 +140,7 @@ export default function Hero() {
                 onClick={() => navigate("/signup?role=worker")}
                 className="text-[0.875rem] font-semibold text-brass-200 underline-offset-4 hover:underline"
               >
-                Are you a tradesperson? List your skill for free →
+                Are you a tradesperson? List your skill for free â†’
               </button>
             </motion.div>
           </div>
@@ -187,3 +185,5 @@ export default function Hero() {
     </section>
   );
 }
+
+
