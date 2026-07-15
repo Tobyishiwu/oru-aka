@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Hammer, LogOut, MessageCircle, Menu, Plus, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -33,6 +33,14 @@ export default function Navbar() {
           >
             Find workers
           </Link>
+          {isAuthenticated && user?.role === "client" && (
+            <Link
+              to="/home"
+              className="rounded-full px-3.5 py-2 text-[0.9rem] font-medium text-ink-600 transition-colors hover:bg-indigo-800/5 hover:text-indigo-800"
+            >
+              Home
+            </Link>
+          )}
           {isAuthenticated && user?.role === "worker" && (
             <Link
               to="/dashboard"
@@ -132,6 +140,11 @@ export default function Navbar() {
             </Link>
             {isAuthenticated ? (
               <>
+                {user?.role === "client" && (
+                  <Link to="/home" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-[0.9rem] font-medium text-ink-700 hover:bg-ink-50">
+                    Home
+                  </Link>
+                )}
                 {user?.role === "worker" && (
                   <Link to="/dashboard" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-[0.9rem] font-medium text-ink-700 hover:bg-ink-50">
                     Dashboard
@@ -180,3 +193,5 @@ export default function Navbar() {
     </header>
   );
 }
+
+

@@ -150,7 +150,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="relative hidden lg:block"
+            className="relative mt-10 lg:mt-0"
           >
             <div className="relative overflow-hidden rounded-[1.5rem] shadow-card-lg">
               <img
@@ -185,6 +185,7 @@ export default function Hero() {
     </section>
   );
 }
+
 
 
 

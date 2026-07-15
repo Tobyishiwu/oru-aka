@@ -48,7 +48,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-indigo-700 pt-6 sm:flex-row">
           <p className="text-[0.8rem] text-indigo-300">
-            Â© {new Date().getFullYear()} Oru Aka. All rights reserved.
+            &copy; {new Date().getFullYear()} Oru Aka. All rights reserved.
           </p>
           <div className="flex items-center gap-3">
             {[Globe, Mail, MessageCircle].map((Icon, i) => (
@@ -66,3 +66,4 @@ export default function Footer() {
     </footer>
   );
 }
+

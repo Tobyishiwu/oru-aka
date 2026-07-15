@@ -8,6 +8,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 
 import HomePage from "./pages/HomePage";
+import ClientHomePage from "./pages/ClientHomePage";
 import BrowseWorkersPage from "./pages/BrowseWorkersPage";
 import WorkerProfilePage from "./pages/WorkerProfilePage";
 import SignupPage from "./pages/SignupPage";
@@ -43,6 +44,15 @@ export default function App() {
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path="verify-phone" element={<VerifyPhonePage />} />
+
+            <Route
+              path="home"
+              element={
+                <ProtectedRoute roles={["client"]}>
+                  <ClientHomePage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="profile"
@@ -104,5 +114,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
-

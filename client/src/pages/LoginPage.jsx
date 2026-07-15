@@ -1,9 +1,15 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Hammer } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { TextField } from "../components/ui/Fields";
 import Button from "../components/ui/Button";
+
+const ROLE_HOME = {
+  worker: "/dashboard",
+  admin: "/admin",
+  client: "/home",
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,8 +26,9 @@ export default function LoginPage() {
     setError("");
     setIsSubmitting(true);
     try {
-      await login({ phone, password });
-      const redirectTo = location.state?.from?.pathname || "/";
+      const data = await login({ phone, password });
+      const roleHome = ROLE_HOME[data.user.role] || "/";
+      const redirectTo = location.state?.from?.pathname || roleHome;
       navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Could not log in. Check your details.");
