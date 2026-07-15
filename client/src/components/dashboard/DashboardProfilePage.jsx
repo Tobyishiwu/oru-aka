@@ -99,7 +99,7 @@ export default function DashboardProfilePage() {
         {hasProfile ? "Edit your listing" : "Create your listing"}
       </h2>
       <p className="mt-1 text-[0.875rem] text-ink-400">
-        This is what clients see when they search for workers. Be specific â€” detailed
+        This is what clients see when they search for workers. Be specific &mdash; detailed
         profiles get more contacts.
       </p>
 
@@ -198,3 +198,4 @@ export default function DashboardProfilePage() {
     </div>
   );
 }
+

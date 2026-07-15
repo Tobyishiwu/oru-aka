@@ -55,7 +55,7 @@ export default function DashboardBoostPage() {
 
         {!pricing?.paymentsEnabled && (
           <div className="mt-4 rounded-xl bg-indigo-50 p-3.5 text-[0.85rem] text-indigo-700">
-            Boost payments are launching soon. You can reserve a boost now â€” we&apos;ll notify
+            Boost payments are launching soon. You can reserve a boost now &mdash; we&apos;ll notify
             you the moment checkout is available, with no charge until then.
           </div>
         )}
@@ -91,7 +91,7 @@ export default function DashboardBoostPage() {
                 <div className="flex items-center gap-2.5">
                   <Check className="h-4 w-4 text-verified-500" strokeWidth={2} />
                   <span className="text-[0.875rem] font-medium text-ink-700">
-                    {DURATION_LABELS[boost.durationDays]} boost â€” {formatNaira(boost.amount)}
+                    {DURATION_LABELS[boost.durationDays]} boost &mdash; {formatNaira(boost.amount)}
                   </span>
                 </div>
                 <span className="rounded-full bg-ink-100 px-2.5 py-0.5 text-[0.75rem] font-medium text-ink-500">
@@ -105,3 +105,4 @@ export default function DashboardBoostPage() {
     </div>
   );
 }
+

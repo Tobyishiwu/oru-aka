@@ -47,7 +47,7 @@ export default function DashboardVerificationPage() {
       <h2 className="font-display text-[1.2rem] font-semibold text-ink-800">Get verified</h2>
       <p className="mt-1 text-[0.875rem] text-ink-400">
         Verified profiles get a trust badge and rank higher in search. Reviewed within
-        24â€“48 hours of submission.
+        24&ndash;48 hours of submission.
       </p>
 
       <div className="mt-5">
@@ -65,7 +65,7 @@ export default function DashboardVerificationPage() {
             <div>
               <p className="text-[0.9rem] font-semibold text-brass-700">Verification in progress</p>
               <p className="text-[0.825rem] text-brass-700/80">
-                We&apos;ve received your ID and are reviewing it. This usually takes 24â€“48 hours.
+                We&apos;ve received your ID and are reviewing it. This usually takes 24&ndash;48 hours.
               </p>
             </div>
           </div>
@@ -102,3 +102,4 @@ export default function DashboardVerificationPage() {
     </div>
   );
 }
+

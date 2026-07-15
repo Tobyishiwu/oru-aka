@@ -58,7 +58,7 @@ export default function Hero() {
               transition={{ duration: 0.55, delay: 0.12 }}
               className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-indigo-200"
             >
-              Find skilled, reviewed tradespeople near you â€” electricians, plumbers, tailors,
+              Find skilled, reviewed tradespeople near you &mdash; electricians, plumbers, tailors,
               carpenters, and more.
             </motion.p>
 
@@ -185,5 +185,6 @@ export default function Hero() {
     </section>
   );
 }
+
 
 
