@@ -140,7 +140,7 @@ export default function Hero() {
                 onClick={() => navigate("/signup?role=worker")}
                 className="text-[0.875rem] font-semibold text-brass-200 underline-offset-4 hover:underline"
               >
-                Are you a tradesperson? List your skill for free â†’
+                Are you a tradesperson? List your skill for free &rarr;
               </button>
             </motion.div>
           </div>
@@ -185,6 +185,7 @@ export default function Hero() {
     </section>
   );
 }
+
 
 
 
