@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 
 import AppLayout from "./components/layout/AppLayout";
+import ScrollToTop from "./components/ScrollToTop";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import AdminLayout from "./components/layout/AdminLayout";
@@ -33,6 +34,7 @@ import AdminUsersPage from "./components/admin/AdminUsersPage";
 export default function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <SocketProvider>
         <Routes>
           <Route element={<AppLayout />}>
@@ -114,3 +116,5 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
