@@ -8,7 +8,7 @@ import Button from "../components/ui/Button";
 const ROLE_HOME = {
   worker: "/dashboard",
   admin: "/admin",
-  client: "/home",
+  client: "/workers",
 };
 
 export default function LoginPage() {
@@ -27,9 +27,22 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       const data = await login({ phone, password });
-      const roleHome = ROLE_HOME[data.user.role] || "/";
-      const redirectTo = location.state?.from?.pathname || roleHome;
-      navigate(redirectTo, { replace: true });
+      const role = data.user.role;
+      const roleHome = ROLE_HOME[role] || "/";
+
+      // Only honor a "return to X" redirect if that path is actually valid
+      // for this role \u2014 otherwise a client who was earlier bounced from
+      // /dashboard (worker-only) would get sent right back to /dashboard on
+      // login, immediately bounce again, and land somewhere confusing.
+      let redirectTo = location.state?.from?.pathname;
+      if (redirectTo) {
+        const needsWorker = redirectTo.startsWith("/dashboard");
+        const needsAdmin = redirectTo.startsWith("/admin");
+        const mismatch = (needsWorker && role !== "worker") || (needsAdmin && role !== "admin");
+        if (mismatch) redirectTo = null;
+      }
+
+      navigate(redirectTo || roleHome, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Could not log in. Check your details.");
     } finally {

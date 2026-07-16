@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send } from "lucide-react";
+﻿import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { ArrowLeft, Send, Phone, X, ExternalLink } from "lucide-react";
 import { chatApi } from "../api/misc";
+import { workerApi } from "../api/workers";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { formatRelativeTime } from "../utils/format";
 import { PageSpinner } from "../components/ui/Badges";
+import Button from "../components/ui/Button";
 
 export default function ConversationPage() {
   const { conversationId } = useParams();
@@ -18,10 +20,11 @@ export default function ConversationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [text, setText] = useState("");
   const [otherTyping, setOtherTyping] = useState(false);
+  const [showProfilePanel, setShowProfilePanel] = useState(false);
+  const [workerProfileId, setWorkerProfileId] = useState(null);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // Load conversation history via REST
   useEffect(() => {
     setIsLoading(true);
     Promise.all([chatApi.listConversations(), chatApi.getMessages(conversationId)])
@@ -29,12 +32,19 @@ export default function ConversationPage() {
         const conv = convRes.data.conversations.find((c) => c._id === conversationId);
         setConversation(conv || null);
         setMessages(msgRes.data.messages);
+
+        const other = conv?.participants.find((p) => p._id !== user._id);
+        if (other?.role === "worker") {
+          workerApi
+            .getByUserId(other._id)
+            .then(({ data }) => setWorkerProfileId(data.profileId))
+            .catch(() => setWorkerProfileId(null));
+        }
       })
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, [conversationId]);
 
-  // Join the socket room and listen for real-time messages
   useEffect(() => {
     if (!socket) return;
 
@@ -90,12 +100,11 @@ export default function ConversationPage() {
     if (socket && isConnected) {
       socket.emit("send-message", { conversationId, text: trimmed });
     } else {
-      // REST fallback if the socket connection isn't available
       try {
         const { data } = await chatApi.sendMessage(conversationId, trimmed);
         setMessages((prev) => [...prev, { ...data.message, sender: { _id: user._id, name: user.name } }]);
       } catch (err) {
-        // swallow — the input already cleared; a production app would show a retry toast
+        // swallow \u2014 the input already cleared; a production app would show a retry toast
       }
     }
   }
@@ -114,19 +123,25 @@ export default function ConversationPage() {
         >
           <ArrowLeft className="h-4.5 w-4.5" strokeWidth={2} />
         </button>
-        <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-indigo-100">
-          {other?.avatarUrl ? (
-            <img src={other.avatarUrl} alt={other.name} className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-[0.8rem] font-semibold text-indigo-600">
-              {other?.name?.slice(0, 2).toUpperCase()}
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="text-[0.95rem] font-semibold text-ink-800">{other?.name}</p>
-          {otherTyping && <p className="text-[0.75rem] text-indigo-500">typing…</p>}
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowProfilePanel(true)}
+          className="flex items-center gap-3 rounded-lg px-1 py-1 transition-colors hover:bg-ink-50"
+        >
+          <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-indigo-100">
+            {other?.avatarUrl ? (
+              <img src={other.avatarUrl} alt={other.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-[0.8rem] font-semibold text-indigo-600">
+                {other?.name?.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="text-left">
+            <p className="text-[0.95rem] font-semibold text-ink-800">{other?.name}</p>
+            {otherTyping && <p className="text-[0.75rem] text-indigo-500">typing\u2026</p>}
+          </div>
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
@@ -170,6 +185,63 @@ export default function ConversationPage() {
           </button>
         </div>
       </form>
+
+      {showProfilePanel && other && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/50 sm:items-center"
+          onClick={() => setShowProfilePanel(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-t-3xl bg-white p-6 sm:rounded-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowProfilePanel(false)}
+                aria-label="Close"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-ink-400 hover:bg-ink-50"
+              >
+                <X className="h-4 w-4" strokeWidth={2.25} />
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="h-20 w-20 overflow-hidden rounded-full bg-indigo-100">
+                {other.avatarUrl ? (
+                  <img src={other.avatarUrl} alt={other.name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[1.4rem] font-semibold text-indigo-600">
+                    {other.name?.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <p className="mt-3 font-display text-[1.15rem] font-semibold text-ink-800">{other.name}</p>
+              <p className="text-[0.85rem] capitalize text-ink-400">{other.role}</p>
+              {other.phone && <p className="mt-1 text-[0.9rem] text-ink-600">{other.phone}</p>}
+            </div>
+
+            <div className="mt-5 flex flex-col gap-2.5">
+              {other.phone && (
+                <a href={`tel:${other.phone}`} className="w-full">
+                  <Button variant="outline" size="md" className="w-full">
+                    <Phone className="h-4 w-4" strokeWidth={2} />
+                    Call {other.name?.split(" ")[0]}
+                  </Button>
+                </a>
+              )}
+              {workerProfileId && (
+                <Link to={`/workers/${workerProfileId}`} className="w-full">
+                  <Button variant="primary" size="md" className="w-full">
+                    <ExternalLink className="h-4 w-4" strokeWidth={2} />
+                    View full profile
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,10 +1,11 @@
-const express = require("express");
+﻿const express = require("express");
 const {
   createWorkerProfile,
   updateMyWorkerProfile,
   getMyWorkerProfile,
   listWorkers,
   getWorkerById,
+  getWorkerByUserId,
   uploadWorkerPhotos,
   deleteWorkerPhoto,
   updateWorkerPhotoCaption,
@@ -17,6 +18,7 @@ const router = express.Router();
 
 // Public
 router.get("/", listWorkers);
+router.get("/by-user/:userId", getWorkerByUserId);
 router.get("/:id", getWorkerById);
 
 // Authenticated (worker-owned)
@@ -29,3 +31,5 @@ router.delete("/me/photos/:photoId", protect, deleteWorkerPhoto);
 router.post("/me/verification", protect, upload.single("idDocument"), submitVerification);
 
 module.exports = router;
+
+

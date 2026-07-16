@@ -1,4 +1,4 @@
-const asyncHandler = require("express-async-handler");
+﻿const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 const User = require("../models/User");
@@ -7,7 +7,7 @@ const { ApiError } = require("../middleware/errorHandler");
 // GET /api/chat/conversations
 const listConversations = asyncHandler(async (req, res) => {
   const conversations = await Conversation.find({ participants: req.user._id })
-    .populate("participants", "name avatarUrl role")
+    .populate("participants", "name avatarUrl role phone")
     .sort({ lastMessageAt: -1 });
 
   res.json({ success: true, conversations });
@@ -27,13 +27,13 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
 
   let conversation = await Conversation.findOne({
     participants: { $all: [req.user._id, userId], $size: 2 },
-  }).populate("participants", "name avatarUrl role");
+  }).populate("participants", "name avatarUrl role phone");
 
   if (!conversation) {
     conversation = await Conversation.create({
       participants: [req.user._id, userId],
     });
-    conversation = await conversation.populate("participants", "name avatarUrl role");
+    conversation = await conversation.populate("participants", "name avatarUrl role phone");
   }
 
   res.status(200).json({ success: true, conversation });
@@ -101,3 +101,4 @@ const sendMessage = asyncHandler(async (req, res) => {
 });
 
 module.exports = { listConversations, getOrCreateConversation, getMessages, sendMessage };
+

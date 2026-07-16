@@ -1,4 +1,4 @@
-const asyncHandler = require("express-async-handler");
+﻿const asyncHandler = require("express-async-handler");
 const WorkerProfile = require("../models/WorkerProfile");
 const User = require("../models/User");
 const { ApiError } = require("../middleware/errorHandler");
@@ -271,8 +271,15 @@ const submitVerification = asyncHandler(async (req, res) => {
   });
 });
 
+const getWorkerByUserId = asyncHandler(async (req, res) => {
+  const profile = await WorkerProfile.findOne({ user: req.params.userId, isPublished: true });
+  if (!profile) throw new ApiError(404, "Worker profile not found");
+  res.json({ success: true, profileId: profile._id });
+});
+
 module.exports = {
   createWorkerProfile,
+  getWorkerByUserId,
   updateMyWorkerProfile,
   getMyWorkerProfile,
   listWorkers,
@@ -282,3 +289,4 @@ module.exports = {
   updateWorkerPhotoCaption,
   submitVerification,
 };
+
