@@ -16,7 +16,6 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import VerifyPhonePage from "./pages/VerifyPhonePage";
 import ProfilePage from "./pages/ProfilePage";
 import MessagesListPage from "./pages/MessagesListPage";
 import ConversationPage from "./pages/ConversationPage";
@@ -45,8 +44,6 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
-            <Route path="verify-phone" element={<VerifyPhonePage />} />
-
             <Route
               path="home"
               element={
@@ -116,5 +113,7 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
 
 

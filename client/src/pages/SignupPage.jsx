@@ -1,9 +1,15 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Hammer } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { TextField, SelectField } from "../components/ui/Fields";
 import Button from "../components/ui/Button";
+
+const ROLE_HOME = {
+  worker: "/dashboard",
+  admin: "/admin",
+  client: "/workers",
+};
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -30,8 +36,8 @@ export default function SignupPage() {
     setError("");
     setIsSubmitting(true);
     try {
-      await signup(form);
-      navigate("/verify-phone", { state: { phone: form.phone } });
+      const data = await signup(form);
+      navigate(ROLE_HOME[data.user.role] || "/", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Could not create your account. Try again.");
     } finally {

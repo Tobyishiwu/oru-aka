@@ -1,4 +1,4 @@
-const asyncHandler = require("express-async-handler");
+﻿const asyncHandler = require("express-async-handler");
 const User = require("../models/User");
 const Otp = require("../models/Otp");
 const WorkerProfile = require("../models/WorkerProfile");
@@ -12,7 +12,6 @@ const {
 } = require("../utils/tokens");
 
 function normalizePhone(phone) {
-  // Normalize Nigerian numbers to a consistent +234 format
   const digits = String(phone).replace(/\D/g, "");
   if (digits.startsWith("234")) return `+${digits}`;
   if (digits.startsWith("0")) return `+234${digits.slice(1)}`;
@@ -21,8 +20,10 @@ function normalizePhone(phone) {
 }
 
 // POST /api/auth/signup
-// Creates the account immediately (so workers can list right away per the
-// tiered verification model), and fires off an OTP for phone verification.
+// Creates the account and logs the user in immediately. Phone verification
+// via OTP was removed from signup (kept only for password reset, where it
+// protects a security-sensitive action) so new users aren't blocked behind
+// an SMS dependency just to start using the app.
 const signup = asyncHandler(async (req, res) => {
   const { name, phone, password, role, state, city, email } = req.body;
 
@@ -51,37 +52,15 @@ const signup = asyncHandler(async (req, res) => {
     role,
     state: state || "Lagos",
     city: city || "",
+    phoneVerified: true,
   });
-
-  // Kick off OTP verification. If the SMS provider fails (network issue,
-  // quota, etc.) we don't want to fail the entire signup \u2014 the account
-  // and OTP record are already created, so the user can use "resend code"
-  // to try again. We just let them know delivery may be delayed.
-  const code = generateOtpCode();
-  await Otp.create({
-    phone: normalizedPhone,
-    code,
-    purpose: "signup",
-    expiresAt: otpExpiryDate(10),
-  });
-
-  let otpDelivered = true;
-  try {
-    await sendOtpSms(normalizedPhone, code);
-  } catch (smsErr) {
-    otpDelivered = false;
-    console.error(`[signup] Failed to send OTP SMS to ${normalizedPhone}:`, smsErr.message);
-  }
 
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
   res.status(201).json({
     success: true,
-    message: otpDelivered
-      ? "Account created. Enter the verification code sent to your phone."
-      : "Account created, but we couldn't send the verification code right now. Tap \"Resend code\" to try again.",
-    otpDelivered,
+    message: "Account created successfully.",
     user: user.toSafeObject(),
     accessToken,
     refreshToken,
@@ -89,7 +68,8 @@ const signup = asyncHandler(async (req, res) => {
 });
 
 // POST /api/auth/send-otp
-// Resends an OTP for an existing, unverified phone number.
+// Resends an OTP for an existing, unverified phone number. Currently only
+// reachable via the password-reset flow.
 const sendOtp = asyncHandler(async (req, res) => {
   const { phone, purpose } = req.body;
   if (!phone) throw new ApiError(400, "Phone number is required");
@@ -120,6 +100,8 @@ const sendOtp = asyncHandler(async (req, res) => {
 });
 
 // POST /api/auth/verify-otp
+// Kept for completeness / potential future use, no longer part of the
+// signup flow.
 const verifyOtp = asyncHandler(async (req, res) => {
   const { phone, code } = req.body;
   if (!phone || !code) throw new ApiError(400, "Phone and code are required");
@@ -168,10 +150,6 @@ const verifyOtp = asyncHandler(async (req, res) => {
 });
 
 // POST /api/auth/forgot-password
-// Sends an OTP scoped to "password-reset" so it can't be reused to bypass
-// other verification flows. Always responds the same way whether or not the
-// phone number exists, so this endpoint can't be used to discover which
-// phone numbers have accounts.
 const requestPasswordReset = asyncHandler(async (req, res) => {
   const { phone } = req.body;
   if (!phone) throw new ApiError(400, "Phone number is required");
@@ -199,8 +177,6 @@ const requestPasswordReset = asyncHandler(async (req, res) => {
     }
   }
 
-  // Same response regardless of whether the account exists \u2014 prevents
-  // using this endpoint to enumerate which phone numbers are registered.
   res.json({
     success: true,
     message: "If an account exists for this phone number, a reset code has been sent.",
@@ -208,10 +184,6 @@ const requestPasswordReset = asyncHandler(async (req, res) => {
 });
 
 // POST /api/auth/reset-password
-// Verifies a "password-reset"-scoped OTP and sets the new password in one
-// atomic step. Deliberately separate from verifyOtp: a code here can only
-// ever be used to reset a password, never to mark a phone as verified or
-// satisfy any other OTP-gated flow.
 const resetPassword = asyncHandler(async (req, res) => {
   const { phone, code, newPassword } = req.body;
   if (!phone || !code || !newPassword) {
@@ -247,7 +219,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: normalizedPhone });
   if (!user) throw new ApiError(404, "No account found with this phone number");
 
-  user.password = newPassword; // re-hashed automatically by the pre-save hook
+  user.password = newPassword;
   await user.save();
 
   otpDoc.consumedAt = new Date();
