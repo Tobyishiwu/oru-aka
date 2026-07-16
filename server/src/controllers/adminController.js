@@ -1,4 +1,4 @@
-const asyncHandler = require("express-async-handler");
+﻿const asyncHandler = require("express-async-handler");
 const WorkerProfile = require("../models/WorkerProfile");
 const User = require("../models/User");
 const { ApiError } = require("../middleware/errorHandler");
@@ -83,7 +83,29 @@ const deactivateUser = asyncHandler(async (req, res) => {
   user.isActive = false;
   await user.save();
 
+  // Deactivating a worker's account should also remove their listing from
+  // public search results, not just block their login.
+  if (user.role === "worker") {
+    await WorkerProfile.findOneAndUpdate({ user: user._id }, { isPublished: false });
+  }
+
   res.json({ success: true, message: "User deactivated" });
+});
+
+// PATCH /api/admin/users/:userId/activate
+const activateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) throw new ApiError(404, "User not found");
+
+  user.isActive = true;
+  await user.save();
+
+  // Reactivating a worker's account should also restore their public listing.
+  if (user.role === "worker") {
+    await WorkerProfile.findOneAndUpdate({ user: user._id }, { isPublished: true });
+  }
+
+  res.json({ success: true, message: "User reactivated" });
 });
 
 module.exports = {
@@ -93,4 +115,8 @@ module.exports = {
   getPlatformStats,
   listUsers,
   deactivateUser,
+  activateUser,
 };
+
+
+

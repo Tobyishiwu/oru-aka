@@ -1,4 +1,4 @@
-const express = require("express");
+﻿const express = require("express");
 const {
   getVerificationQueue,
   approveVerification,
@@ -6,6 +6,7 @@ const {
   getPlatformStats,
   listUsers,
   deactivateUser,
+  activateUser,
 } = require("../controllers/adminController");
 const { protect, restrictTo } = require("../middleware/auth");
 
@@ -19,5 +20,8 @@ router.patch("/verification/:workerId/approve", approveVerification);
 router.patch("/verification/:workerId/reject", rejectVerification);
 router.get("/users", listUsers);
 router.patch("/users/:userId/deactivate", deactivateUser);
+router.patch("/users/:userId/activate", activateUser);
 
 module.exports = router;
+
+

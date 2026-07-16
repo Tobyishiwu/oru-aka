@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from "react";
-import { UserX } from "lucide-react";
+import { UserX, UserCheck } from "lucide-react";
 import { adminApi } from "../../api/misc";
 import { formatRelativeTime } from "../../utils/format";
 import Button from "../ui/Button";
@@ -41,15 +41,22 @@ export default function AdminUsersPage() {
       .finally(() => setIsLoading(false));
   }
 
-  async function handleDeactivate(userId) {
-    if (!window.confirm("Deactivate this user? They will lose access to their account.")) {
-      return;
-    }
-    setProcessingId(userId);
+  async function handleToggleActive(u) {
+    const isActivating = !u.isActive;
+    const confirmMessage = isActivating
+      ? "Reactivate this user? They will regain access to their account."
+      : "Deactivate this user? They will lose access to their account.";
+    if (!window.confirm(confirmMessage)) return;
+
+    setProcessingId(u._id);
     try {
-      await adminApi.deactivateUser(userId);
+      if (isActivating) {
+        await adminApi.activateUser(u._id);
+      } else {
+        await adminApi.deactivateUser(u._id);
+      }
       setUsers((prev) =>
-        prev.map((u) => (u._id === userId ? { ...u, isActive: false } : u))
+        prev.map((user) => (user._id === u._id ? { ...user, isActive: isActivating } : user))
       );
     } catch (err) {
       // no-op
@@ -120,14 +127,18 @@ export default function AdminUsersPage() {
                 </div>
 
                 <Button
-                  variant="danger"
+                  variant={u.isActive ? "danger" : "outline"}
                   size="sm"
-                  onClick={() => handleDeactivate(u._id)}
-                  disabled={!u.isActive || processingId === u._id}
+                  onClick={() => handleToggleActive(u)}
+                  disabled={processingId === u._id}
                   className="shrink-0"
                 >
-                  <UserX className="h-4 w-4" strokeWidth={2.25} />
-                  {u.isActive ? "Deactivate" : "Deactivated"}
+                  {u.isActive ? (
+                    <UserX className="h-4 w-4" strokeWidth={2.25} />
+                  ) : (
+                    <UserCheck className="h-4 w-4" strokeWidth={2.25} />
+                  )}
+                  {processingId === u._id ? "Saving\u2026" : u.isActive ? "Deactivate" : "Reactivate"}
                 </Button>
               </div>
             ))}

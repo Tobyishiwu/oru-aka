@@ -37,5 +37,7 @@ export const adminApi = {
     api.patch(`/admin/verification/${workerId}/reject`, { notes }),
   listUsers: (params) => api.get("/admin/users", { params }),
   deactivateUser: (userId) => api.patch(`/admin/users/${userId}/deactivate`),
+  activateUser: (userId) => api.patch(`/admin/users/${userId}/activate`),
 };
+
 
